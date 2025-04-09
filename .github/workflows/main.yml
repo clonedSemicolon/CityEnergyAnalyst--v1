@@ -26,8 +26,28 @@ jobs:
         shell: bash -l {0}
         run: pip install .
 
-      - name: Run tests
+      - name: Install Strace
+        run: sudo apt-get update && sudo apt-get install -y strace
+
+      - name: Run tests with strace
         shell: bash -l {0}
         run: |
-          cea test --type unittest
-          cea test --type integration
+          # Run unit tests with strace and save the logs to a file
+          strace -ff -o strace_unittest_$(date +%Y%m%d%H%M%S).log cea test --type unittest
+          
+          # Run integration tests with strace and save the logs to a file
+          strace -ff -o strace_integration_$(date +%Y%m%d%H%M%S).log cea test --type integration
+      
+          # Upload the strace logs as artifacts
+          mkdir -p strace_logs
+          mv strace_unittest_*.log strace_logs/
+          mv strace_integration_*.log strace_logs/
+          
+          # Upload all strace logs as artifacts
+          echo "Uploading strace logs..."
+        - name: Upload strace logs
+          uses: actions/upload-artifact@v4
+          with:
+            name: strace-logs
+            path: strace_logs/
+
