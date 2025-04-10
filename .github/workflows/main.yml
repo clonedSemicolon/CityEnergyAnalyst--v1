@@ -50,5 +50,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: strace-logs
-          path: strace_logs/
+          path: CityEnergyAnalyst/bin
 
