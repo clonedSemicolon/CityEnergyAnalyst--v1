@@ -23,6 +23,12 @@ jobs:
           environment-name: cea
           cache-environment: true
 
+      - name: Show environment info
+         run: |
+            echo "Current directory: $(pwd)"
+            echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+            ls -la
+     
       - name: Install CEA
         shell: bash -l {0}
         run: pip install .
