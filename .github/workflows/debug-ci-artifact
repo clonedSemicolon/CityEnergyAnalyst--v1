@@ -1,0 +1,30 @@
+name: Quick Debug CI with strace
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  debug-strace:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run a simple command with strace
+      run: |
+        # Run a quick command using strace and save the output
+        mkdir -p bin
+        strace -o bin/strace_output.log echo "Hello, World!"
+        
+    - name: Upload strace logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs
+        path: bin/strace_output.log
