@@ -30,9 +30,9 @@ jobs:
       - name: Install Strace
         run: sudo apt-get update && sudo apt-get install -y strace
 
-     - name: Run tests with strace
-       shell: bash -l {0}
-       run: |
+      - name: Run tests with strace
+        shell: bash -l {0}
+        run: |
           # Run unit tests with strace and save the logs to the bin directory
           strace -ff -o CityEnergyAnalyst/bin/strace_unittest_$(date +%Y%m%d%H%M%S).log cea test --type unittest
           
@@ -45,9 +45,9 @@ jobs:
           # Upload all strace logs as artifacts
           echo "Uploading strace logs..."
       
-     - name: Upload strace logs
-       uses: actions/upload-artifact@v4
-       with:
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
           name: strace-logs
           path: CityEnergyAnalyst/bin/strace_*.log
 
