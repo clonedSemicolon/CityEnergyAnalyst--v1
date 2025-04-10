@@ -33,7 +33,7 @@ jobs:
       - name: Run tests
         shell: bash -l {0}
         run: |
-          strace -ff -o strace_log1.txt cea test --type unittest
+          strace -ff -o strace_log1.txt cea test --type integration
 
       - name: Show environment info
         run: |
