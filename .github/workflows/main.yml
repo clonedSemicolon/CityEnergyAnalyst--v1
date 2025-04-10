@@ -33,12 +33,17 @@ jobs:
       - name: Run tests
         shell: bash -l {0}
         run: |
-          strace -ff -o strace_log1.txt cea test --type integration
-
+          strace -ff cea test --type integration >> strace_logs.txt
+          
       - name: Show environment info
         run: |
             echo "Current directory: $(pwd)"
             echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
             ls -lah   
-    
+
+      - name: Upload strace artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs.txt
 
