@@ -24,7 +24,7 @@ jobs:
           cache-environment: true
 
       - name: Show environment info
-         run: |
+        run: |
             echo "Current directory: $(pwd)"
             echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
             ls -la
