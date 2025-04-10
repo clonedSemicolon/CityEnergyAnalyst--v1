@@ -38,10 +38,10 @@ jobs:
           mkdir -p CityEnergyAnalyst/logs
           
           # Run unit tests with strace and save the logs to the bin directory
-          strace -ff -o CityEnergyAnalyst/bin/strace_unittest_$(date +%Y%m%d%H%M%S).log cea test --type unittest
+          strace -ff -o CityEnergyAnalyst/logs/strace_unittest_$(date +%Y%m%d%H%M%S).log cea test --type unittest
           
           # Run integration tests with strace and save the logs to the bin directory
-          strace -ff -o CityEnergyAnalyst/bin/strace_integration_$(date +%Y%m%d%H%M%S).log cea test --type integration
+          strace -ff -o CityEnergyAnalyst/logs/strace_integration_$(date +%Y%m%d%H%M%S).log cea test --type integration
           
           # Verify the logs were saved in the bin directory
           ls -l CityEnergyAnalyst/logs/
