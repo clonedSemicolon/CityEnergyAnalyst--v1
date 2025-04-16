@@ -31,7 +31,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y strace
 
       - name: Run integration tests with strace
-        run: strace -o strace_logs.txt cea test --type integration
+        run:  strace -ff -e trace=all cea test --type integration > strace_logs.txt 2>&1
           
       - name: Show environment info
         run: |
