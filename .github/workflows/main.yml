@@ -30,10 +30,10 @@ jobs:
       - name: Install Strace
         run: sudo apt-get update && sudo apt-get install -y strace
 
-      - name: Run tests
-        shell: bash -l {0}
+      - name: Run integration tests with strace
         run: |
-          strace -ff cea test --type integration >> strace_logs.txt
+            # Run strace without -f (do not follow child processes) and output to a single log file
+            strace -o strace_logs.txt cea test --type integration > /dev/null 2>&1
           
       - name: Show environment info
         run: |
