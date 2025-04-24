@@ -44,4 +44,3 @@ jobs:
         with:
           name: strace_logs
           path: strace_logs.txt
-
