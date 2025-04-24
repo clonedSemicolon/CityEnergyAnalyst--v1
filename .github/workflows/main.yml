@@ -36,15 +36,21 @@ jobs:
           mkdir -p strace_output
           strace -ff -o strace_output/strace cea test --type integration
           
+      - name: Merge strace logs
+        shell: bash -l {0}
+        run: |
+          cat strace_output/strace.* > combined_strace.log    
+
       - name: Show environment info
         run: |
             echo "Current directory: $(pwd)"
             echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
             ls -lah   
 
-      - name: Upload strace artifacts
+      - name: Upload combined strace log
         uses: actions/upload-artifact@v4
         with:
-          name: strace_logs
-          path: strace_output/
+          name: strace_combined
+          path: combined_strace.log
+
 
