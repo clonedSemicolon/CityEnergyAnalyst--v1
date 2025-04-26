@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Run strace wrapper setup
+        run: |
+          chmod +x ./strace-wrapper.sh
+          ./strace-wrapper.sh
+
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
