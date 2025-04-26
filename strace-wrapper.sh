@@ -7,8 +7,8 @@ MERGED_LOG="combined_strace.log"
 
 # Step 1: Install strace if missing
 echo "🔵 [strace-wrapper] Installing strace..."
-apt-get update -qq
-apt-get install -y -qq strace gzip coreutils
+sudo apt-get update -qq
+sudo apt-get install -y -qq strace coreutils gzip
 
 # Step 2: Prepare log directory
 echo "🔵 [strace-wrapper] Preparing strace output directory..."
