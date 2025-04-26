@@ -37,6 +37,12 @@ jobs:
         run: |
           cea test --type unittest
           cea test --type integration
+
+      - name: Upload combined strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_log_${{ github.job }}
+          path: artifact_upload/
           
       
 
