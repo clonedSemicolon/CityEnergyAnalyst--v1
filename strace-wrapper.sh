@@ -14,28 +14,34 @@ sudo apt-get install -y -qq strace coreutils gzip
 echo "🔵 [strace-wrapper] Preparing strace output directory..."
 mkdir -p "$LOG_DIR"
 
-# Step 3: Override bash to run under strace
-echo "🔵 [strace-wrapper] Setting up strace shell override..."
-echo 'defaults:
-  run:
-    shell: bash --noprofile --norc -eo pipefail -c "mkdir -p strace_output && strace -ff -o strace_output/strace bash -eo pipefail -c '\''$0'\''"
-' > strace-shell-override.yml
+# Step 3: Capture commands to run
+if [ "$#" -eq 0 ]; then
+    echo "❗ [strace-wrapper] No commands provided to trace. Exiting."
+    exit 1
+fi
 
-# Step 4: After job finishes, merge and upload logs
-function merge_and_upload_logs {
+COMMAND="$*"
+
+# Step 4: Run the given commands under strace
+echo "🔵 [strace-wrapper] Running commands under strace..."
+strace -ff -o ${LOG_DIR}/strace bash -c "$COMMAND"
+
+# Step 5: Merge strace logs
+if compgen -G "${LOG_DIR}/strace.*" > /dev/null; then
     echo "🔵 [strace-wrapper] Merging strace logs..."
     cat ${LOG_DIR}/strace.* > "$MERGED_LOG"
+else
+    echo "⚠️ [strace-wrapper] No strace logs found to merge."
+    exit 1
+fi
 
-    echo "🔵 [strace-wrapper] Uploading artifact..."
-    if [ -n "${GITHUB_ACTIONS:-}" ]; then
-      gh extension install actions/upload-artifact
-      gh run upload-artifact "$MERGED_LOG" --name "strace_log_${GITHUB_JOB}"
-    else
-      echo "Not running inside GitHub Actions. Skipping artifact upload."
-    fi
-}
+# Step 6: Upload artifact (only inside GitHub Actions)
+if [ -n "${GITHUB_ACTIONS:-}" ]; then
+  echo "🔵 [strace-wrapper] Uploading artifact..."
+  mkdir -p artifact_upload
+  cp "$MERGED_LOG" artifact_upload/
+else
+  echo "⚠️ [strace-wrapper] Not running inside GitHub Actions. Skipping artifact upload."
+fi
 
-trap merge_and_upload_logs EXIT
-
-# Step 5: Done
-echo "✅ [strace-wrapper] Setup complete. Proceeding with job execution..."
+echo "✅ [strace-wrapper] Done!"
