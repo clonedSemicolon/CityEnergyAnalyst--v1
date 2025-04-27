@@ -2,8 +2,6 @@ name: Push to Master
 
 on:
   workflow_dispatch:
-  push:
-    branches: [master]
 
 jobs:
   test:
