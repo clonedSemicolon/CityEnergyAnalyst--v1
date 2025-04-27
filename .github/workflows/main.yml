@@ -16,10 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run strace wrapper setup
+      - name: Setup strace environment
         run: |
           chmod +x ./strace-wrapper.sh
           ./strace-wrapper.sh
+          chmod +x ./strace_run.sh
 
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
@@ -28,22 +29,23 @@ jobs:
           environment-name: cea
           cache-environment: true
 
-      - name: Install CEA
-        shell: bash -l {0}
-        run: pip install .
-
-      - name: Run tests
+      - name: Install CEA (with strace)
         shell: bash -l {0}
         run: |
-          cea test --type unittest
-          cea test --type integration
+          ./strace_run.sh install_cea "pip install ."
 
-      - name: Upload combined strace logs
+      - name: Run unittest (with strace)
+        shell: bash -l {0}
+        run: |
+          ./strace_run.sh unittest "cea test --type unittest"
+
+      - name: Run integration tests (with strace)
+        shell: bash -l {0}
+        run: |
+          ./strace_run.sh integration "cea test --type integration"
+
+      - name: Upload all strace logs
         uses: actions/upload-artifact@v4
         with:
-          name: strace_log_${{ github.job }}
+          name: strace_logs_${{ github.job }}
           path: artifact_upload/
-          
-      
-
-
