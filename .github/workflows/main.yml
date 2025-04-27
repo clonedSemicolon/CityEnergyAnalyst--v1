@@ -14,36 +14,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup strace environment
-        run: |
-          chmod +x ./strace-wrapper.sh
-          ./strace-wrapper.sh
-          chmod +x ./strace_run.sh
-
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: conda-lock.yml
           environment-name: cea
           cache-environment: true
+     
+      - name: Install CEA
+        shell: bash -l {0}
+        run: pip install .
 
-      - name: Install CEA (with strace)
+      - name: Install Strace
+        run: sudo apt-get update && sudo apt-get install -y strace
+
+      - name: Run tests with strace
         shell: bash -l {0}
         run: |
-          ./strace_run.sh install_cea "pip install ."
-
-      - name: Run unittest (with strace)
+          mkdir -p strace_output
+          strace -ff -o strace_output/strace cea test --type integration
+          
+      - name: Merge strace logs
         shell: bash -l {0}
         run: |
-          ./strace_run.sh unittest "cea test --type unittest"
-
-      - name: Run integration tests (with strace)
-        shell: bash -l {0}
+          cat strace_output/strace.* > combined_strace.log    
+      - name: Show environment info
         run: |
-          ./strace_run.sh integration "cea test --type integration"
-
-      - name: Upload all strace logs
+            echo "Current directory: $(pwd)"
+            echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+            ls -lah   
+      - name: Upload combined strace log
         uses: actions/upload-artifact@v4
         with:
-          name: strace_logs_${{ github.job }}
-          path: artifact_upload/
+          name: strace_combined
+          path: combined_strace.log
