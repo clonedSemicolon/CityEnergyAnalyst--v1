@@ -28,11 +28,11 @@ jobs:
       - name: Install Strace
         run: sudo apt-get update && sudo apt-get install -y strace
 
-      - name: Run tests with strace
-        shell: bash -l {0}
-        run: |
-          mkdir -p strace_output
-          strace -ff -o strace_output/strace cea test --type integration
+      - name: Run integration test
+        uses: ./.github/trace-step
+        with:
+          step-name: integration
+          command: "cea test --type integration"
           
       - name: Merge strace logs
         shell: bash -l {0}
