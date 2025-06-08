@@ -1,19 +1,1 @@
-name: Trace Step
-description: Run a command with strace and log by step name
-inputs:
-  step-name:
-    description: 'Name for strace log file'
-    required: true
-  command:
-    description: 'Shell command to run'
-    required: true
 
-runs:
-  using: "composite"
-  steps:
-    - run: |
-        mkdir -p strace_logs
-        echo "::group::Running ${{ inputs.step-name }}"
-        strace -tt -f -o strace_logs/${{ inputs.step-name }}.log bash -c "${{ inputs.command }}"
-        echo "::endgroup::"
-      shell: bash
