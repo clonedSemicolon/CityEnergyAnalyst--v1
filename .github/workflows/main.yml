@@ -24,13 +24,19 @@ jobs:
 
       - name: Install CEA
         shell: bash -l {0}
-        run: pip install .
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_27713.log bash -c "pip install ." pip install .
 
       - name: Install Strace (Linux only)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y strace
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_20498.log bash -c "sudo apt-get update && sudo apt-get install -y strace" sudo apt-get update && sudo apt-get install -y strace
 
       - name: Run tests
         shell: bash -l {0}
-        run: |
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_592.log bash -c "|" |
           cea test --type integration
+
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs/
