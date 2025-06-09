@@ -1,6 +1,8 @@
 name: Push to Master
 
 on:
+  push:
+    branches: [main, master]
   workflow_dispatch:
 
 jobs:
@@ -24,16 +26,15 @@ jobs:
 
       - name: Install CEA
         shell: bash -l {0}
-        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_27713.log bash -c "pip install ." pip install .
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_3541.log bash -c "pip install ." pip install .
 
       - name: Install Strace (Linux only)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y strace
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_23248.log bash -c "sudo apt-get update && sudo apt-get install -y strace" sudo apt-get update && sudo apt-get install -y strace
 
       - name: Run tests
         shell: bash -l {0}
-        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_592.log bash -c "|" |
-          cea test --type integration
+        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_16435.log bash -c "|" |
 
       - name: Upload strace logs
         uses: actions/upload-artifact@v4
