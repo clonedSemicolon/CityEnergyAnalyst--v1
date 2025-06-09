@@ -1,5 +1,5 @@
 name: Trace Step
-description: Run a command with strace and log by step name
+description: Run a command with strace and log it by step name
 inputs:
   step-name:
     description: 'Name for strace log file'
