@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Strace (Linux only)
         if: runner.os == 'Linux'
-        run: mkdir -p strace_logs && strace -tt -f -o strace_logs/step_23248.log bash -c "sudo apt-get update && sudo apt-get install -y strace" sudo apt-get update && sudo apt-get install -y strace
+        run: sudo apt-get update && sudo apt-get install -y strace
 
       - name: Run tests
         shell: bash -l {0}
