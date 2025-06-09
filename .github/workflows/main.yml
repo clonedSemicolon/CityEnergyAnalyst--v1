@@ -30,16 +30,7 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y strace
 
-      - name: Run integration test with trace (Linux only)
-        if: runner.os == 'Linux'
-        uses: ./.github/trace-step
-        with:
-          step-name: integration
-          command: "cea test --type integration"
-
-      - name: Upload strace logs (Linux only)
-        if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v4
-        with:
-          name: strace-logs-${{ matrix.os }}
-          path: strace_logs/
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          cea test --type integration
