@@ -1,5 +1,5 @@
 [project]
-name = "cityenergyanalyst"
+name = "cityenergyanalyst "
 description = "City Energy Analyst"
 readme = "README.rst"
 requires-python = "==3.8.*"
