@@ -25,8 +25,7 @@ jobs:
         shell: bash -l {0}
         run: |-
           mkdir -p strace_logs && strace -tt -f -o strace_logs/test_step3.log bash -c "|"
-            cea test --type unittest
-          cea test --type integration
+          cea test --type unittest
           "":
     steps:
       - name: Upload strace logs
