@@ -47,3 +47,10 @@ jobs:
         with:
           name: strace_logs
           path: strace_logs/
+  "":
+    steps:
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs/

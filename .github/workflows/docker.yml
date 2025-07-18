@@ -24,7 +24,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract Repository Name
-        run: "      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n            mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n          mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"echo \"REPO_NAME=${GITHUB_REPOSITORY@L}\" >>${GITHUB_ENV}\"\n    EOF\n    \n    EOF\n    \n      EOF\n      \n      EOF\n      \n      EOF\n      "
+        run: "mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n        mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n            mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n          mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"|\"\n      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step4.log bash -c \"echo \"REPO_NAME=${GITHUB_REPOSITORY@L}\" >>${GITHUB_ENV}\"\n    EOF\n    \n    EOF\n    \n      EOF\n      \n      EOF\n      \n      EOF\n      "
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -34,7 +34,7 @@ jobs:
             ghcr.io/${{ env.REPO_NAME }}/cea:dev
       - name: Push version tag on release
         if: github.event_name == 'release' && github.event.action == 'published'
-        run: "      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n            mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n          mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"docker buildx imagetools create \\\n  --tag ${{ secrets.DOCKERHUB_USERNAME }}/cea:${GITHUB_REF##*/} \\\n  --tag ${{ secrets.DOCKERHUB_USERNAME }}/cea:latest \\\n  --tag ghcr.io/${{ env.REPO_NAME }}/cea:${GITHUB_REF##*/} \\\n  --tag ghcr.io/${{ env.REPO_NAME }}/cea:latest \\\n  ghcr.io/${{ env.REPO_NAME }}/cea:dev\n  \"\n    EOF\n    \n    EOF\n    \n      EOF\n      \n      EOF\n      \n      EOF\n      "
+        run: "mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n        mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n              mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n            mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n          mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"|\"\n      mkdir -p strace_logs && strace -tt -f -o strace_logs/docker_step6.log bash -c \"docker buildx imagetools create \\\n  --tag ${{ secrets.DOCKERHUB_USERNAME }}/cea:${GITHUB_REF##*/} \\\n  --tag ${{ secrets.DOCKERHUB_USERNAME }}/cea:latest \\\n  --tag ghcr.io/${{ env.REPO_NAME }}/cea:${GITHUB_REF##*/} \\\n  --tag ghcr.io/${{ env.REPO_NAME }}/cea:latest \\\n  ghcr.io/${{ env.REPO_NAME }}/cea:dev\n  \"\n    EOF\n    \n    EOF\n    \n      EOF\n      \n      EOF\n      \n      EOF\n      "
       - name: Upload strace logs
         uses: actions/upload-artifact@v4
         with:
@@ -65,6 +65,13 @@ jobs:
         with:
           name: strace_logs
           path: strace_logs/
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs/
+  "":
+    steps:
       - name: Upload strace logs
         uses: actions/upload-artifact@v4
         with:
