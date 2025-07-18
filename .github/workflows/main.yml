@@ -24,7 +24,7 @@ jobs:
 
       - name: Install CEA
         shell: bash -l {0}
-        run: mkdir -p strace_logs \&\& strace -tt -f -o strace_logs/step_de5a5935.log bash -c "pip install ." pip install .
+        run: pip install .
 
       - name: Run tests
         shell: bash -l {0}
