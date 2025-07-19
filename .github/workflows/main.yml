@@ -1,10 +1,8 @@
 name: Push to Master
-
 on:
   push:
     branches: [master]
     paths: ['cea/**', 'conda-lock.yml']
-
 jobs:
   test:
     name: ${{ matrix.os }}-test
@@ -26,6 +24,12 @@ jobs:
         run: pip install .
       - name: Run tests
         shell: bash -l {0}
-        run: |
-          cea test --type unittest
+        run: |-
+          mkdir -p strace_logs && strace -tt -f -o strace_logs/test_step3.log bash -c "|"
+            cea test --type unittest
           cea test --type integration
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs/

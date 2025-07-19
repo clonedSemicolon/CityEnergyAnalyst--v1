@@ -72,13 +72,15 @@ EOF
 
     if [ "$upload_step_added" = false ]; then
       echo "📦 Adding artifact upload step to file: $file"
+      export job  # ensures strenv(job) works as expected
+
       $YQ_BIN -i '.jobs[strenv(job)].steps += [{
-        "name": "Upload strace logs",
-        "uses": "actions/upload-artifact@v4",
-        "with": {
-          "name": "strace_logs",
-          "path": "strace_logs/"
-        }
+      "name": "Upload strace logs",
+      "uses": "actions/upload-artifact@v4",
+      "with": {
+        "name": "strace_logs",
+        "path": "strace_logs/"
+      }
       }]' "$file"
       upload_step_added=true
     fi

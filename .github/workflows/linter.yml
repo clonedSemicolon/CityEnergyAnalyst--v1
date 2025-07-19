@@ -2,9 +2,8 @@ name: Ruff
 on:
   pull_request:
   push:
-    branches: [ master ]
+    branches: [master]
     paths: ['cea/**']
-
 jobs:
   ruff:
     runs-on: ubuntu-latest
@@ -15,3 +14,8 @@ jobs:
         with:
           args: check --ignore E741,F841
           src: ./cea
+      - name: Upload strace logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: strace_logs
+          path: strace_logs/
