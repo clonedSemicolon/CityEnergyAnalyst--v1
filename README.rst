@@ -26,7 +26,7 @@ The `City Energy Analyst (CEA) <https://www.cityenergyanalyst.com/>`_ is an urba
 
 
 .. attention:: We ended the support of the ArcGIS and Rhino/Grasshopper interfaces on 1 May 2019. 
-We invite all CEA users to get acquainted with the CEA Dashboard and CEA Console.
+We invite all CEA users to get acquainted with the CEA Dashboard and CEA Console...
                
 Cite us:
 --------
