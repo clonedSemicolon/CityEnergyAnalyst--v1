@@ -17,7 +17,7 @@ jobs:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/setup-strace@v1
+      - uses: your-org/setup-strace@v4
 
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
