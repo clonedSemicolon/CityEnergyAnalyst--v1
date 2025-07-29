@@ -1,27 +1,31 @@
 name: Generate conda-lock file
+
 on: workflow_dispatch
+
 jobs:
   generate_conda_lock:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Install conda-lock with Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-name: ci
           create-args: conda-lock
           init-shell: bash
+
       - name: Run conda-lock
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/generate_conda_lock_step2.log bash -c |
-            conda-lock --mamba -f environment.yml -p osx-64 -p linux-64 -p win-64 --lockfile conda-lock.yml
+        run: conda-lock --mamba -f environment.yml -p osx-64 -p linux-64 -p win-64 --lockfile conda-lock.yml
         shell: bash -el {0}
+
       - name: Get branch name
         id: branch_name
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/generate_conda_lock_step3.log bash -c |
-            GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
+        run: |
+          GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
           echo "name=$GITHUB_REF" >> "$GITHUB_OUTPUT"
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -32,8 +36,4 @@ jobs:
           committer: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit-message: "Update conda-lock.yml"
           assignees: ${{ github.actor }}
-      - name: Upload strace logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: strace_logs
-          path: strace_logs/
+          
