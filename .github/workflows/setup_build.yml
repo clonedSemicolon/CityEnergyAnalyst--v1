@@ -1,4 +1,5 @@
 name: Build CEA Setup
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,27 +8,31 @@ on:
         required: true
         type: string
         default: 'master'
+
 jobs:
   build_win_setup:
     runs-on: "windows-latest"
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
+
       - name: Install CEA to python environment
         run: pip install .
+
       - name: Get CEA version
         shell: bash
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step3.log bash -c |
-            echo "CEA_VERSION=$(python -c "import cea; print(cea.__version__)")" >> "$GITHUB_ENV"
+        run: echo "CEA_VERSION=$(python -c "import cea; print(cea.__version__)")" >> "$GITHUB_ENV"
+
       - name: Create sdist of CEA
         shell: bash
         run: |
           python -m pip install build
           python -m build
           mv dist/cityenergyanalyst-*.tar.gz setup/cityenergyanalyst.tar.gz
+
       - name: Cache CEA env
         id: cache-env
         uses: actions/cache@v4
@@ -36,6 +41,7 @@ jobs:
             setup/dependencies/cea-env.7z
             setup/dependencies/micromamba.exe
           key: ${{ runner.os }}-${{ hashFiles('conda-lock.yml') }}-env
+      
       - uses: mamba-org/setup-micromamba@v2
         if: steps.cache-env.outputs.cache-hit != 'true'
         with:
@@ -45,32 +51,32 @@ jobs:
           cache-environment: true
           micromamba-binary-path: setup/dependencies/micromamba.exe
           create-args: --no-pyc
+
       - name: Clean conda environment
         if: steps.cache-env.outputs.cache-hit != 'true'
         shell: bash -el {0}
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step7.log bash -c |
-            micromamba clean -afy
+        run: micromamba clean -afy
+
       - name: Compress conda environment
         if: steps.cache-env.outputs.cache-hit != 'true'
         shell: bash -el {0}
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step8.log bash -c |
-            7z a setup/dependencies/cea-env.7z $MAMBA_ROOT_PREFIX
+        run: 7z a setup/dependencies/cea-env.7z $MAMBA_ROOT_PREFIX
+
       - uses: actions/checkout@v4
         with:
           path: gui
           repository: architecture-building-systems/CityEnergyAnalyst-GUI
           ref: ${{ inputs.gui-branch }}
           fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+
       - name: Enable Corepack
         shell: bash
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step11.log bash -c |
-            corepack enable
+        run: corepack enable
+
       - name: Package CEA GUI
         shell: bash
         env:
@@ -81,25 +87,27 @@ jobs:
           yarn version $CEA_VERSION
           yarn electron:release
           mv "out/CEA-4 Desktop Setup ${CEA_VERSION}.exe" $GITHUB_WORKSPACE/setup/gui_setup.exe
+
       - name: Install setup plugin
         shell: bash
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step13.log bash -c |
-            cd "C:\Program Files (x86)\NSIS\Plugins\x86-unicode"
+        run: |
+          cd "C:\Program Files (x86)\NSIS\Plugins\x86-unicode"
           curl -o Nsis7z.7z https://nsis.sourceforge.io/mediawiki/images/6/69/Nsis7z_19.00.7z
           7z e Nsis7z.7z Plugins/x86-unicode/nsis7z.dll
+
       - name: Make setup
         shell: bash
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_win_setup_step14.log bash -c |
-            mkdir -p $GITHUB_WORKSPACE/setup/Output
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/setup/Output
           makensis $GITHUB_WORKSPACE/setup/cityenergyanalyst.nsi
+
       - name: Upload setup
         uses: actions/upload-artifact@v4
         with:
           name: setup
           path: ${{ github.workspace }}\setup\Output
           compression-level: 0
+      
       - name: Create Release Draft
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -109,48 +117,53 @@ jobs:
           tag_name: v${{ env.CEA_VERSION }}
           files: ${{ github.workspace }}/setup/Output/*
           fail_on_unmatched_files: true
-      - name: Upload strace logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: strace_logs
-          path: strace_logs/
+
   build_mac_dmg:
     runs-on: "macos-latest"
     steps:
       - uses: actions/checkout@v4
         with:
           path: cea
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
+
       - name: Install CEA to python environment
         run: pip install ${{ github.workspace }}/cea
+
       - name: Get CEA version
         shell: bash
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_mac_dmg_step3.log bash -c |
-            echo "CEA_VERSION=$(python -c "import cea; print(cea.__version__)")" >> "$GITHUB_ENV"
+        run: echo "CEA_VERSION=$(python -c "import cea; print(cea.__version__)")" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
         with:
           path: gui
           repository: architecture-building-systems/CityEnergyAnalyst-GUI
           ref: ${{ inputs.gui-branch }}
           fetch-depth: 0
+
       - name: Fetch micromamba
-        run: "mkdir -p strace_logs && strace -tt -f -o strace_logs/build_mac_dmg_step5.log bash -c \"|\"\n  cd gui\nmkdir -p ./dependencies/arm64\ncurl -Ls https://micro.mamba.pm/api/micromamba/osx-arm64/2.0.7 | tar -xvj -C ./dependencies/arm64 --strip-components=1 bin/micromamba\nmkdir -p ./dependencies/x64\ncurl -Ls https://micro.mamba.pm/api/micromamba/osx-64/2.0.7 | tar -xvj -C ./dependencies/x64 --strip-components=1 bin/micromamba "
+        run: |
+          cd gui
+          mkdir -p ./dependencies/arm64
+          curl -Ls https://micro.mamba.pm/api/micromamba/osx-arm64/2.0.7 | tar -xvj -C ./dependencies/arm64 --strip-components=1 bin/micromamba
+          mkdir -p ./dependencies/x64
+          curl -Ls https://micro.mamba.pm/api/micromamba/osx-64/2.0.7 | tar -xvj -C ./dependencies/x64 --strip-components=1 bin/micromamba 
+
       - name: Save Apple API Key secret to file
         env:
           APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_mac_dmg_step6.log bash -c |
-            echo -n $APPLE_API_KEY_BASE64 | base64 -d -o ${{ github.workspace }}/gui/api_key.p8
+        run: |
+          echo -n $APPLE_API_KEY_BASE64 | base64 -d -o ${{ github.workspace }}/gui/api_key.p8
+  
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+  
       - name: Enable Corepack
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_mac_dmg_step8.log bash -c |
-            corepack enable
+        run: corepack enable
+
       - name: Package CEA GUI
         env:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
@@ -159,9 +172,8 @@ jobs:
           CSC_LINK: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GUI_GH_TOKEN }}
-        run: |-
-          mkdir -p strace_logs && strace -tt -f -o strace_logs/build_mac_dmg_step9.log bash -c |
-            cd gui
+        run: |
+          cd gui
           yarn
           yarn version $CEA_VERSION
           yarn electron:release --arm64 --x64
